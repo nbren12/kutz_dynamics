@@ -1,19 +1,43 @@
 # -*- coding: utf-8 -*-
-import click
 import logging
 from pathlib import Path
+
+import click
+import h5py
+
 from dotenv import find_dotenv, load_dotenv
+
+from .kursiv import kuramoto_sivachinsky
+from .lorenz63 import lorenz63
+from .lorenz96 import lorenz96
+
+
+def store_data_to_h5(f, name, t, x):
+    logger = logging.getLogger(__name__)
+    logger.info(f"Storing {name} to netcdf")
+    grp = f.create_group(name)
+    grp.create_dataset('t', data=t)
+    grp.create_dataset('x', data=x)
 
 
 @click.command()
-@click.argument('input_filepath', type=click.Path(exists=True))
 @click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath):
+def main(output_filepath):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
     logger = logging.getLogger(__name__)
-    logger.info('making final data set from raw data')
+    logger.info(f"Opening hdf5 file at {output_filepath}")
+    with h5py.File(output_filepath, "w") as f:
+
+        t, x = kuramoto_sivachinsky()
+        store_data_to_h5(f, "kuramoto", t, x)
+
+        t, x = lorenz96()
+        store_data_to_h5(f, "lorenz96", t, x)
+
+        t, x = lorenz63()
+        store_data_to_h5(f, "lorenz63", t, x)
 
 
 if __name__ == '__main__':

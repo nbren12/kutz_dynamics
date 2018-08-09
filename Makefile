@@ -26,8 +26,8 @@ requirements: test_environment
 	pip install -r requirements.txt
 
 ## Make Dataset
-data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py
+data: #requirements
+	$(PYTHON_INTERPRETER) -m src.data.make_dataset "data/data.h5"
 
 ## Delete all compiled Python files
 clean:
