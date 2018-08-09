@@ -14,7 +14,7 @@ from .lorenz96 import lorenz96
 
 def store_data_to_h5(f, name, t, x):
     logger = logging.getLogger(__name__)
-    logger.info(f"Storing {name} to netcdf")
+    logger.info(f"Storing {name} to hdf5")
     grp = f.create_group(name)
     grp.create_dataset('t', data=t)
     grp.create_dataset('x', data=x)
