@@ -49,4 +49,10 @@ Project Organization
 
 --------
 
+Reports
+-------
+
+[Lorenz 96 with CNN](https://colab.research.google.com/drive/1cKNVxcWCEk6UbsssYsr78tVyp5ifwjv0)
+
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+

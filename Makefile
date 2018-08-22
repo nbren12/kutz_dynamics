@@ -5,7 +5,7 @@
 #################################################################################
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
+BUCKET = kutz-dynamics-74999057-aa18-4730-aa06-fa3a49fede41
 PROFILE = default
 PROJECT_NAME = kutz_dynamics
 PYTHON_INTERPRETER = python3
@@ -38,13 +38,9 @@ clean:
 lint:
 	flake8 src
 
-## Upload Data to S3
-sync_data_to_s3:
-ifeq (default,$(PROFILE))
-	aws s3 sync data/ s3://$(BUCKET)/data/
-else
-	aws s3 sync data/ s3://$(BUCKET)/data/ --profile $(PROFILE)
-endif
+## Upload Data to GCS
+sync_data_to_gcs:
+	gsutil rsync data/ gs://$(BUCKET)/data/
 
 ## Download Data from S3
 sync_data_from_s3:
