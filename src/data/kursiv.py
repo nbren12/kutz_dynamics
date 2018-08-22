@@ -10,14 +10,19 @@ from numpy import cos, sin, pi, exp
 import numpy as np
 
 
-def kuramoto_sivachinsky():
+def kuramoto_sivachinsky(u, d):
+    """Run KS system forward in time
+
+    Parameters
+    ----------
+    u : (n,)
+        initial condition
+    d : float
+        grid spacing
+    """
 
     tmax = 1000
-    N = 128
-    L = 32
-    d = L / N
-    x = L * np.r_[:N] / N
-    u = cos(x * L / 2) * (1 + sin(x * L / 2))
+    N = u.shape[0]
     v = fft(u)
 
     # Precompute various ETDRK4 scalar quantities:
@@ -66,3 +71,28 @@ def kuramoto_sivachinsky():
             tt.append(t)
 
     return np.stack(tt), np.stack(uu)
+
+
+def get_initial_condition(N=128, L=32.0):
+    """
+
+    Returns
+    -------
+    u0, d
+    """
+    x = L * np.r_[:N] / N
+    u0 = cos(x * L / 2) * (1 + sin(x * L / 2))
+    return u0 + np.random.randn(N) * .1, L / N
+
+
+def run(n_init=20):
+    N = 128
+    L = 32.0
+
+    out = []
+    for n in range(n_init):
+        u0, d = get_initial_condition(N=N, L=L)
+        t, u = kuramoto_sivachinsky(u0, d)
+        out.append(u)
+
+    return t, np.stack(out)

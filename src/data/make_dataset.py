@@ -6,10 +6,7 @@ import click
 import h5py
 
 from dotenv import find_dotenv, load_dotenv
-
-from .kursiv import kuramoto_sivachinsky
-from .lorenz63 import lorenz63
-from .lorenz96 import lorenz96
+from . import kursiv, lorenz63, lorenz96
 
 
 def store_data_to_h5(f, name, t, x):
@@ -22,7 +19,8 @@ def store_data_to_h5(f, name, t, x):
 
 @click.command()
 @click.argument('output_filepath', type=click.Path())
-def main(output_filepath):
+@click.option('-n', '--n-init', type=int)
+def main(output_filepath, n_init):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
@@ -30,14 +28,14 @@ def main(output_filepath):
     logger.info(f"Opening hdf5 file at {output_filepath}")
     with h5py.File(output_filepath, "w") as f:
 
-        t, x = kuramoto_sivachinsky()
-        store_data_to_h5(f, "kuramoto", t, x)
-
-        t, x = lorenz96()
-        store_data_to_h5(f, "lorenz96", t, x)
-
-        t, x = lorenz63()
-        store_data_to_h5(f, "lorenz63", t, x)
+        for key, run in [
+            ('kuramoto', kursiv.run),
+            ('lorenz96', lorenz96.run),
+            ('lorenz63', lorenz63.run),
+        ]:
+            logger.info(f"Running {key} simulations")
+            t, x = run(n_init)
+            store_data_to_h5(f, key, t, x)
 
 
 if __name__ == '__main__':

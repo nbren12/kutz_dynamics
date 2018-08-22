@@ -26,14 +26,16 @@ def lorenz96_rhs(x, t, F):
     return d
 
 
-def lorenz96():
+def run(n_init=20):
     # these are our constants
     N = 36  # number of variables
     F = 8  # forcing
-    x0 = F * np.ones(N)  # initial state (equilibrium)
-    x0[19] += 0.01  # add small perturbation to 20th variable
     t = np.arange(0.0, 40.0, 0.01)
+    out = []
+    for n in range(n_init):
+        x0 = F * np.ones(N)  # initial state (equilibrium)
+        x0 = x0 + np.random.randn(N)*.01
+        x = odeint(lorenz96_rhs, x0, t, args=(F, ))
+        out.append(x)
 
-    x = odeint(lorenz96_rhs, x0, t, args=(F, ))
-
-    return t, x
+    return t, np.stack(out)
